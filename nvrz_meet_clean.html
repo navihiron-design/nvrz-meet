@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NVRZ Meet</title>
+
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #0f172a;
+      color: white;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+    }
+
+    h1 {
+      font-size: 42px;
+      margin-bottom: 10px;
+    }
+
+    p {
+      opacity: 0.8;
+    }
+
+    .controls {
+      margin-top: 20px;
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    input {
+      padding: 14px;
+      width: 260px;
+      border-radius: 10px;
+      border: none;
+      font-size: 16px;
+      outline: none;
+    }
+
+    button {
+      padding: 14px 20px;
+      border: none;
+      border-radius: 10px;
+      background: #2563eb;
+      color: white;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #1d4ed8;
+    }
+
+    #meetingCode {
+      margin-top: 15px;
+      font-size: 18px;
+    }
+
+    #meet {
+      width: 100%;
+      height: 100vh;
+      display: none;
+    }
+  </style>
+</head>
+
+<body>
+
+  <h1>NVRZ Meet</h1>
+  <p>Create or join meetings instantly</p>
+
+  <div class="controls">
+    <input id="room" placeholder="Enter meeting code" />
+    <button onclick="createMeeting()">Create Meeting</button>
+    <button onclick="joinMeeting()">Join Meeting</button>
+  </div>
+
+  <div id="meetingCode"></div>
+
+  <div id="meet"></div>
+
+  <script src="https://meet.jit.si/external_api.js"></script>
+
+  <script>
+    function startMeeting(roomName) {
+
+      if (!roomName) {
+        alert("Please enter a meeting code");
+        return;
+      }
+
+      document.querySelector('.controls').style.display = 'none';
+      document.querySelector('h1').style.display = 'none';
+      document.querySelector('p').style.display = 'none';
+      document.getElementById('meetingCode').style.display = 'none';
+
+      document.getElementById('meet').style.display = 'block';
+
+      const domain = 'meet.jit.si';
+
+      const options = {
+        roomName: roomName,
+        parentNode: document.querySelector('#meet'),
+        width: '100%',
+        height: '100%',
+
+        configOverwrite: {
+          prejoinPageEnabled: false,
+          disableDeepLinking: true,
+          startWithAudioMuted: false,
+          startWithVideoMuted: false
+        },
+
+        interfaceConfigOverwrite: {
+          SHOW_JITSI_WATERMARK: false,
+          SHOW_WATERMARK_FOR_GUESTS: false,
+          MOBILE_APP_PROMO: false,
+          DEFAULT_BACKGROUND: '#0f172a',
+          DISABLE_JOIN_LEAVE_NOTIFICATIONS: true
+        }
+      };
+
+      new JitsiMeetExternalAPI(domain, options);
+    }
+
+    function createMeeting() {
+      const code = Math.random().toString(36).substring(2, 8).toUpperCase();
+
+      document.getElementById('meetingCode').innerHTML =
+        'Meeting Code: <strong>' + code + '</strong>';
+
+      startMeeting(code);
+    }
+
+    function joinMeeting() {
+      const code = document.getElementById('room').value.toUpperCase();
+      startMeeting(code);
+    }
+  </script>
+
+</body>
+</html>
